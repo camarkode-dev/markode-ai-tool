@@ -6,11 +6,12 @@
   "main": "dist/server/index.js",
   "type": "module",
   "scripts": {
-    "dev": "tsx server/index.ts",
-    "build": "tsc",
-    "start": "node dist/server/index.js",
-    "clean": "rimraf dist"
-  },
+  "dev": "tsx server/index.ts",
+  "build": "tsc -b server",
+  "start": "node dist/server/index.js",
+  "clean": "rimraf dist"
+},
+  
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",
     "@paypal/paypal-server-sdk": "^2.0.0",
