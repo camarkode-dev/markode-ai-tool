@@ -1,8 +1,24 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./client" },
-    { "path": "./server" },
-    { "path": "./shared" }
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "node20",
+    "moduleResolution": "node16",
+    "outDir": "dist",
+    "rootDir": ".",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "typeRoots": ["./node_modules/@types", "./server"]
+  },
+  "include": [
+    "server/**/*.ts",
+    "shared/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "client"
   ]
 }

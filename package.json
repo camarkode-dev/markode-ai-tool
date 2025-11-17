@@ -1,5 +1,4 @@
 {
-  "$schema": "https://json.schemastore.org/package.json",
   "name": "markode-aitool-server",
   "version": "1.0.0",
   "description": "Backend server for Markode AI Tool using Express, Redis, Passport, and TypeScript.",
@@ -7,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx server/index.ts",
-    "build": "tsc -b server",
+    "build": "tsc",
     "start": "node dist/server/index.js",
     "clean": "rimraf dist"
   },
