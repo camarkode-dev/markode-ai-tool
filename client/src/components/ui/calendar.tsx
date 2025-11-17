@@ -7,6 +7,12 @@ import { buttonVariants } from "@/components/ui/button"
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>
 
+// نوع مخصص لأيقونات DayPicker لتجنب أخطاء الـ TS
+type DayPickerIconProps = {
+  className?: string
+  [key: string]: any
+}
+
 function Calendar({
   className,
   classNames,
@@ -52,10 +58,10 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        IconLeft: ({ className, ...props }) => (
+        IconLeft: ({ className, ...props }: DayPickerIconProps) => (
           <ChevronLeft className={cn("h-4 w-4", className)} {...props} />
         ),
-        IconRight: ({ className, ...props }) => (
+        IconRight: ({ className, ...props }: DayPickerIconProps) => (
           <ChevronRight className={cn("h-4 w-4", className)} {...props} />
         ),
       }}
@@ -63,6 +69,7 @@ function Calendar({
     />
   )
 }
+
 Calendar.displayName = "Calendar"
 
 export { Calendar }

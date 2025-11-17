@@ -11,18 +11,16 @@ if (!process.env.DATABASE_URL) {
   throw new Error("❌ DATABASE_URL must be set in environment variables");
 }
 
-// نوع أي مؤقت ليتم استنتاجه لاحقًا من الاتصال
+// النوع النهائي: union لكل نوع قاعدة بيانات أو any
 let db: any;
 
-async function initDb(): Promise<void> {
+async function initDb() {
   try {
     if (process.env.NODE_ENV === "production") {
-      // اتصال Neon في بيئة الإنتاج
       const sql = neon(process.env.DATABASE_URL!);
       db = drizzleNeon(sql, { schema });
       console.log("✅ Connected to Neon Database (Production)");
     } else {
-      // PostgreSQL محلي في بيئة التطوير
       const client = new NodePgClient({ connectionString: process.env.DATABASE_URL });
       await client.connect();
       db = drizzlePg(client, { schema });
@@ -30,11 +28,10 @@ async function initDb(): Promise<void> {
     }
   } catch (error) {
     console.error("❌ Failed to connect to database:", error);
-    process.exit(1); // إيقاف التطبيق عند فشل الاتصال
+    process.exit(1);
   }
 }
 
-// تأكد من تهيئة الاتصال قبل استخدام db
 await initDb();
 
 export { db };

@@ -1,12 +1,13 @@
+// tsconfig.json
 {
   "compilerOptions": {
     "target": "es2022",
     "module": "esnext",
     "moduleResolution": "node",
-    "jsx": "react-jsx", 
+    "jsx": "react-jsx",
     "outDir": "dist",
     "rootDir": ".",
-    "baseUrl": ".", 
+    "baseUrl": ".",
     "paths": {
       "@/*": ["client/src/*"],
       "@shared/*": ["shared/*"]
@@ -15,8 +16,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "typeRoots": ["./node_modules/@types", "./server"]
+    "resolveJsonModule": true
   },
   "include": [
     "server/**/*.ts",
@@ -24,8 +24,5 @@
     "client/src/**/*.tsx",
     "shared/**/*.ts"
   ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "exclude": ["node_modules", "dist"]
 }
