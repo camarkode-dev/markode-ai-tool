@@ -56,7 +56,8 @@ app.use(passport.session());
 // ====================
 // Serve SPA (Client)
 // ====================
-const clientDistPath = path.resolve(__dirname, "../client/dist");
+// بعد البناء، ملفات العميل موجودة في dist/server/public
+const clientDistPath = path.resolve(__dirname, "public");
 app.use(express.static(clientDistPath));
 
 // ====================
@@ -67,7 +68,6 @@ await registerRoutes(app);
 // ====================
 // SPA Catch-All Route
 // ====================
-// Express 5 + path-to-regexp issue: نستخدم app.use بدلاً من "/*"
 app.use((req: Request, res: Response) => {
   const indexFile = path.join(clientDistPath, "index.html");
   if (fs.existsSync(indexFile)) {
