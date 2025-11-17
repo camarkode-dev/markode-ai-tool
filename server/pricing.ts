@@ -15,9 +15,7 @@ export const PRICING_PLANS = {
 // ================================
 export type PlanId = keyof typeof PRICING_PLANS;
 
-// ================================
-// Schema للتحقق من المدفوعات
-// ================================
+
 export const createPaymentIntentSchema = z.object({
   planId: z
     .string()

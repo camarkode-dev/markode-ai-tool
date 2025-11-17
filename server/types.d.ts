@@ -5,10 +5,13 @@ import { JwtPayload } from "jsonwebtoken";
 // ===== تعريف المستخدم العام =====
 export interface User {
   sub: string;               // معرف المستخدم الخارجي (مثل Google ID)
-  id: string;                // معرف داخلي مكرر أو قاعدة بيانات
+  id?: string;               // معرف داخلي مكرر أو قاعدة بيانات
   name?: string;             // الاسم الكامل
   email?: string;            // البريد الإلكتروني
   picture?: string;          // رابط الصورة الشخصية
+  role?: "admin" | "user" | "guest"; // صلاحيات المستخدم
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 // ===== Request الموسع مع مصادقة JWT =====

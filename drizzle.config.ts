@@ -1,4 +1,5 @@
-import { defineConfig } from "drizzle-kit";
+ // @ts-ignore: missing type declarations for 'drizzle-kit'
+const { defineConfig } = require("drizzle-kit");
 
 if (!process.env.DATABASE_URL) throw new Error("DATABASE_URL must be defined");
 
@@ -9,7 +10,7 @@ export default defineConfig({
   dbCredentials: {
     url: process.env.DATABASE_URL,
     ssl: {
-      rejectUnauthorized: false, // هذا يسمح بالاتصال بدون التحقق من الشهادة
+      rejectUnauthorized: false, 
     },
   },
 });

@@ -14,11 +14,9 @@ import { improveCode } from "./openai.js";
 import path from "path";
 import { fileURLToPath, pathToFileURL } from "url";
 
-// ✅ حل مشكلة __dirname في ESM
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// ✅ استدعاء passport لتسجيل الاستراتيجيات
 import("./passport.js");
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -32,7 +30,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   }
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-    apiVersion: "2025-08-27.basil",
+    apiVersion: "2025-10-29.clover",
   });
 
   const isPayPalAvailable =

@@ -1,7 +1,7 @@
 import OpenAI from "openai";
 
-const openai = new OpenAI({ 
-  apiKey: process.env.OPENAI_API_KEY || process.env.OPENAI_KEY 
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY || process.env.OPENAI_KEY,
 });
 
 export interface GeneratedCode {
@@ -12,14 +12,14 @@ export interface GeneratedCode {
 }
 
 /**
- * توليد مشروع كامل بناءً على وصف المستخدم
+ * توليد مشروع كامل (متوافق مع OpenAI SDK v6)
  */
 export async function generateProjectCode(
-  prompt: string, 
+  prompt: string,
   framework?: string,
   language?: string
 ): Promise<GeneratedCode> {
-  if (!prompt || prompt.trim().length === 0) {
+  if (!prompt?.trim()) {
     throw new Error("Prompt cannot be empty");
   }
 
@@ -29,76 +29,56 @@ export async function generateProjectCode(
       messages: [
         {
           role: "system",
-          content: `You are an expert full-stack developer who generates complete, production-ready code based on project descriptions.
+          content: `You are an expert full-stack developer who generates complete project structures.
 
-Generate a complete project structure with all necessary files based on the user's description. 
+Return JSON ONLY:
 
-Requirements:
-- Fully functional application
-- Include package.json, configuration files, and source code
-- Modern best practices, clean code
-- Error handling and validation
-- Responsive, accessible UI components
-- Support Arabic and English if mentioned
-- Use TypeScript if possible
-- Include deployment instructions
-
-Respond in JSON format exactly as:
 {
   "files": { "file/path": "content" },
   "framework": "react|vue|angular|vanilla|nodejs|python|php",
   "language": "javascript|typescript|python|php",
-  "deploymentInstructions": "step-by-step instructions"
-}`
+  "deploymentInstructions": "steps..."
+}`,
         },
         {
           role: "user",
           content: `Generate a complete project for: ${prompt}
-${framework ? `Preferred framework: ${framework}` : ''}
-${language ? `Preferred language: ${language}` : ''}
-
-Include all necessary files, configuration, source code, and styling.`
-        }
+${framework ? `Preferred framework: ${framework}` : ""}
+${language ? `Preferred language: ${language}` : ""}
+Include all configs and source code.`,
+        },
       ],
       response_format: { type: "json_object" },
     });
 
-    // ⚡ تأكد من وجود محتوى
-    const resultRaw = response.choices?.[0]?.message?.content;
-    if (!resultRaw) throw new Error("No response from OpenAI");
+    const text = response.choices[0]?.message?.content;
+    if (!text) throw new Error("No JSON returned");
 
-    const result = typeof resultRaw === "string" ? JSON.parse(resultRaw) : resultRaw;
+    const result = JSON.parse(text);
 
     return {
-      files: result.files || {},
-      framework: result.framework || "react",
-      language: result.language || "javascript",
-      deploymentInstructions: result.deploymentInstructions || "No deployment instructions provided",
+      files: result.files ?? {},
+      framework: result.framework ?? "react",
+      language: result.language ?? "javascript",
+      deploymentInstructions: result.deploymentInstructions ?? "",
     };
-  } catch (error) {
-    console.error("Error generating project code:", error);
+  } catch (err) {
+    console.error("Error generating project:", err);
     throw new Error("Failed to generate project code");
   }
 }
 
 /**
- * تنظيف الكود من fences أو markdown
+ * تنظيف الكود من fences
  */
 function sanitizeCodeOutput(rawOutput: string): string {
-  if (!rawOutput || typeof rawOutput !== "string") {
-    throw new Error("Invalid code output received");
-  }
-
   let cleaned = rawOutput.trim();
   cleaned = cleaned.replace(/^```.*$/gm, "").replace(/^~~~.*$/gm, "").trim();
-
-  if (!cleaned) throw new Error("Empty code output after sanitization");
-
-  return cleaned;
+  return cleaned || "";
 }
 
 /**
- * تحسين كود موجود بناءً على تعليمات محددة
+ * تحسين الكود
  */
 export async function improveCode(
   code: string,
@@ -113,27 +93,28 @@ export async function improveCode(
       messages: [
         {
           role: "system",
-          content: "You are an expert developer who improves code. Return ONLY the improved code without explanations, markdown, or code fences."
+          content:
+            "You are an expert developer. Return ONLY the improved code with no markdown or explanation.",
         },
         {
           role: "user",
           content: `Improve this code according to:
-${improvements.trim()}
+${improvements}
 
 Original code:
 ${code}
 
-Return ONLY the clean improved code:`
-        }
+Return ONLY the code:`,
+        },
       ],
     });
 
-    const rawOutput = response.choices?.[0]?.message?.content;
-    if (!rawOutput) throw new Error("No response received from OpenAI");
+    const text = response.choices[0]?.message?.content;
+    if (!text) throw new Error("No response received");
 
-    return sanitizeCodeOutput(rawOutput);
-  } catch (error) {
-    console.error("Error improving code:", error);
+    return sanitizeCodeOutput(text);
+  } catch (err) {
+    console.error("Error improving code:", err);
     throw new Error("Failed to improve code");
   }
 }

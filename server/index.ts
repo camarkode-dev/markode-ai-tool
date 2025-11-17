@@ -4,10 +4,10 @@ import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import session, { type SessionOptions } from "express-session";
-import passport from "passport";
+import passport from "./passport.js"; // استيراد passport مع استراتيجيات Google
 import { registerRoutes } from "./routes.js";
 import { RedisStore } from "connect-redis";
-import { createClient } from "redis";
+import { redis } from "./redis.js"; // Upstash Redis REST client
 
 // ====================
 // __dirname fix for ESM
@@ -22,19 +22,11 @@ const app: Express = express();
 const PORT: number = Number(process.env.PORT) || 3000;
 
 // ====================
-// Redis Client & Store
+// Redis Store
 // ====================
-const redisClient = createClient({
-  url: process.env.REDIS_URL || "redis://localhost:6379",
-});
-
-redisClient.on("connect", () => console.log("✅ Connected to Redis"));
-redisClient.on("error", (err) => console.error("Redis Error:", err));
-
-await redisClient.connect();
-
+// ⚠️ connect-redis لا يعرف Upstash REST type، لذلك نستخدم `as any`
 const store = new RedisStore({
-  client: redisClient,
+  client: redis as any,
   prefix: "sess:",
 });
 
@@ -70,25 +62,38 @@ app.use(express.static(clientDistPath));
 // ====================
 // Routes
 // ====================
-(async () => {
-  await registerRoutes(app);
+await registerRoutes(app);
 
-  // 🧭 Catch-All Route
-  app.get("*", (req: Request, res: Response) => {
-    const indexFile = path.join(clientDistPath, "index.html");
-    if (fs.existsSync(indexFile)) res.sendFile(indexFile);
-    else
-      res.status(404).send("index.html not found. Did you build the client?");
-  });
-
-  try {
-    await redisClient.ping();
-    console.log("✅ Connected to Redis & Ready");
-    app.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
-    });
-  } catch (err) {
-    console.error("❌ Cannot start server, Redis not reachable:", err);
-    process.exit(1);
+// ====================
+// SPA Catch-All Route
+// ====================
+// Express 5 + path-to-regexp issue: نستخدم app.use بدلاً من "/*"
+app.use((req: Request, res: Response) => {
+  const indexFile = path.join(clientDistPath, "index.html");
+  if (fs.existsSync(indexFile)) {
+    res.sendFile(indexFile);
+  } else {
+    res.status(404).send("index.html not found. Did you build the client?");
   }
-})();
+});
+
+// ====================
+// Start Server
+// ====================
+try {
+  await redis.get("test"); // اختبار الاتصال بالـ Redis
+  console.log("✅ Redis is ready and responsive");
+
+  app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+} catch (err) {
+  console.error("❌ Cannot start server, Redis not reachable:", err);
+  process.exit(1);
+}
+
+// ====================
+// Handle graceful shutdown
+// ====================
+process.on("SIGINT", () => {
+  console.log("🧹 Exiting server... (No Redis connection to close for REST client)");
+  process.exit(0);
+});
