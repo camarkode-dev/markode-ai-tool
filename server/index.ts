@@ -33,9 +33,6 @@ const store = new RedisStore({
 // ====================
 // Middleware
 // ====================
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
 const sessionOptions: SessionOptions = {
   store,
   secret: process.env.SESSION_SECRET || "supersecret",
@@ -49,6 +46,7 @@ const sessionOptions: SessionOptions = {
   },
 };
 
+// Middleware
 app.use(session(sessionOptions));
 app.use(passport.initialize());
 app.use(passport.session());
