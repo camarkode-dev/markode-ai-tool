@@ -1,4 +1,6 @@
-
+// =======================
+// مكتبات بدون تعريف Types
+// =======================
 declare module 'input-otp';
 declare module 'cmdk';
 declare module 'vaul';
@@ -24,22 +26,33 @@ declare module 'react-day-picker';
 declare module 'react-resizable-panels';
 declare module 'recharts';
 
+// =======================
+// React Day Picker Icons
+// =======================
 type DayPickerIconProps = {
   className?: string;
   [key: string]: any;
 };
 
-
-declare namespace JSX {
-  interface IntrinsicElements {
-    "paypal-button": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
+// =======================
+// JSX Global Elements
+// =======================
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      "paypal-button": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
+    }
   }
 }
 
-
+// =======================
+// Embla Carousel
+// =======================
 type UseEmblaCarouselType = any;
 
-
+// =======================
+// Input OTP Types
+// =======================
 interface OTPInputSlot {
   char: string;
   hasFakeCaret: boolean;
@@ -59,7 +72,9 @@ declare module 'input-otp' {
   >;
 }
 
-
+// =======================
+// Recharts
+// =======================
 declare namespace RechartsPrimitive {
   export type LegendProps = any;
 }
