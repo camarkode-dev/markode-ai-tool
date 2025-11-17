@@ -16,13 +16,14 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true
-  },
-  "include": [
-    "server/**/*.ts",
-    "client/src/**/*.ts",
-    "client/src/**/*.tsx",
-    "shared/**/*.ts"
-  ],
-  "exclude": ["node_modules", "dist"]
+  "resolveJsonModule": true
+},
+"include": [
+"server/**/*.ts",
+"client/src/**/*.ts",
+"client/src/**/*.tsx",
+"shared/**/*.ts",
+"client/src/global.d.ts"
+],
+"exclude": ["node_modules", "dist"]
 }
